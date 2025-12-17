@@ -349,3 +349,12 @@ else:
 
 st.markdown("---")
 st.caption("Designed for Machine Learning Final Project | 2025")
+# --- 加入 QR Code ---
+st.sidebar.markdown("---")
+st.sidebar.subheader("📱 手機體驗")
+# 請將這裡換成你部署後的真實網址
+share_url = "https://telco-churn-app-njwb97mjvapp5eoawhyqcsd.streamlit.app" 
+st.sidebar.image(
+    f"https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={share_url}",
+    caption="掃描 QR Code 分享"
+)
