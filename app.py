@@ -7,6 +7,8 @@ from sklearn.pipeline import Pipeline
 from sklearn.tree import DecisionTreeClassifier
 import time
 import matplotlib.pyplot as plt
+import matplotlib.font_manager as fm # 新增：字型管理
+import os # 新增：檔案路徑管理
 
 # --- 1. 設定網頁版面 ---
 st.set_page_config(
@@ -42,7 +44,6 @@ st.markdown("""
 
 # 1. 欄位名稱對照 (介面標籤用)
 FIELD_LABELS = {
-    # 數值與核心變數
     "SeniorCitizen": "是否為高齡者 (Senior Citizen)",
     "tenure": "使用月數 (Tenure)",
     "MonthlyCharges": "月費 (Monthly Charges)",
@@ -50,8 +51,6 @@ FIELD_LABELS = {
     "InternetService": "網路服務類型 (Internet Service)",
     "Contract": "合約類型 (Contract)",
     "PaymentMethod": "付款方式 (Payment Method)",
-    
-    # 服務類變數
     "OnlineSecurity": "網路安全 (Online Security)",
     "OnlineBackup": "雲端備份 (Online Backup)",
     "DeviceProtection": "設備保護 (Device Protection)",
@@ -60,8 +59,6 @@ FIELD_LABELS = {
     "StreamingMovies": "串流電影 (Streaming Movies)",
     "MultipleLines": "多線電話 (Multiple Lines)",
     "PhoneService": "電話服務 (Phone Service)",
-    
-    # 人口統計與帳務變數
     "Dependents": "親屬/被撫養人 (Dependents)",
     "Partner": "伴侶 (Partner)",
     "PaperlessBilling": "無紙化帳單 (Paperless Billing)",
@@ -70,28 +67,19 @@ FIELD_LABELS = {
 
 # 2. 選項值對照 (下拉選單用)
 OPTION_MAP = {
-    # 通用選項
     "No": "No (無/否)",
     "Yes": "Yes (有/是)",
-    
-    # 服務選項
     "DSL": "DSL (數位迴路)",
     "Fiber optic": "Fiber optic (光纖)",
     "No internet service": "No internet service (無網路服務)",
     "No phone service": "No phone service (無電話服務)",
-    
-    # 合約
     "Month-to-month": "Month-to-month (按月)",
     "One year": "One year (一年約)",
     "Two year": "Two year (兩年約)",
-    
-    # 付款
     "Electronic check": "Electronic check (電子支票)",
     "Mailed check": "Mailed check (郵寄支票)",
     "Bank transfer (automatic)": "Bank transfer (自動轉帳)",
     "Credit card (automatic)": "Credit card (信用卡自動扣款)",
-    
-    # 性別
     "Female": "Female (女性)",
     "Male": "Male (男性)"
 }
@@ -106,6 +94,21 @@ SERVICE_LABELS = {
     "StreamingMovies": "串流電影",
 }
 
+# --- 關鍵修正：強制讀取本地字型檔 ---
+def get_font_prop():
+    # 這裡指定 GitHub 上傳的檔案名稱
+    font_path = "NotoSansTC-Regular.ttf"
+    
+    # 檢查檔案是否存在 (確保雲端環境能讀到)
+    if os.path.exists(font_path):
+        return fm.FontProperties(fname=font_path)
+    else:
+        # 如果本機沒有下載該檔案，則回退使用系統字體 (避免報錯)
+        return fm.FontProperties(family=['Microsoft JhengHei', 'Heiti TC', 'sans-serif'])
+
+# 初始化全域字型物件
+font_prop = get_font_prop()
+
 # --- 2. 載入資料與訓練模型 ---
 @st.cache_resource
 def load_and_train_model():
@@ -115,20 +118,16 @@ def load_and_train_model():
         st.error("找不到 'telco_cleaned_data.csv'，請確認檔案已上傳至同目錄。")
         return None, None, None, None
 
-    # 資料清理
     df["TotalCharges"] = pd.to_numeric(df["TotalCharges"], errors="coerce").fillna(0)
     df["ChurnFlag"] = df["Churn"].map({"Yes": 1, "No": 0})
     
-    # 特徵與目標
     drop_cols = ["customerID", "Churn", "ChurnFlag"]
     X = df.drop(columns=[c for c in drop_cols if c in df.columns])
     y = df["ChurnFlag"]
     
-    # 定義數值與類別欄位
     num_features = ["SeniorCitizen", "tenure", "MonthlyCharges", "TotalCharges"]
     cat_features = [c for c in X.columns if c not in num_features]
     
-    # 建立 Pipeline
     preprocessor = ColumnTransformer(
         transformers=[
             ("num", "passthrough", num_features),
@@ -143,7 +142,6 @@ def load_and_train_model():
     
     model.fit(X, y)
     
-    # 計算統計數據
     stats = {
         "tenure_mean": int(df["tenure"].mean()),
         "monthly_mean": float(df["MonthlyCharges"].mean()),
@@ -163,30 +161,37 @@ model, feature_cols, stats, cat_features = load_and_train_model()
 if model is None:
     st.stop()
 
-# --- 繪圖函式 (中英文支援) ---
-def plot_comparison(user_tenure, user_monthly, stats):
+# --- 繪圖函式 (修正版：接收字型參數) ---
+def plot_comparison(user_tenure, user_monthly, stats, font_prop):
     """繪製使用者與平均值的比較圖"""
-    # 設定字體 (嘗試支援中文，若無則顯示英文)
-    plt.rcParams['font.sans-serif'] = ['Arial Unicode MS', 'Microsoft JhengHei', 'SimHei', 'sans-serif'] 
-    plt.rcParams['axes.unicode_minus'] = False
-
+    
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4))
     
     labels = ['Current\n(當前)', 'Retained Avg\n(留存平均)', 'Churned Avg\n(流失平均)']
     colors = ['#3498db', '#2ecc71', '#e74c3c'] 
     
+    # 準備字型參數包
+    fp_args = {"fontproperties": font_prop}
+
     # 1. Tenure (年資)
     values = [user_tenure, stats["avg_tenure_no_churn"], stats["avg_tenure_churn"]]
     ax1.bar(labels, values, color=colors, alpha=0.8)
-    ax1.set_title("Tenure Comparison (年資比較)")
-    ax1.set_ylabel("Months (月數)")
+    
+    # 套用字型到標題、標籤
+    ax1.set_title("Tenure Comparison (年資比較)", fontsize=12, **fp_args)
+    ax1.set_ylabel("Months (月數)", **fp_args)
+    ax1.set_xticks(range(len(labels)))
+    ax1.set_xticklabels(labels, **fp_args)
     ax1.axhline(y=user_tenure, color='#3498db', linestyle='--', alpha=0.5)
 
     # 2. Monthly Charges (月費)
     values_money = [user_monthly, stats["avg_monthly_no_churn"], stats["avg_monthly_churn"]]
     ax2.bar(labels, values_money, color=colors, alpha=0.8)
-    ax2.set_title("Monthly Fee Comparison (月費比較)")
-    ax2.set_ylabel("Amount USD (金額)")
+    
+    ax2.set_title("Monthly Fee Comparison (月費比較)", fontsize=12, **fp_args)
+    ax2.set_ylabel("Amount USD (金額)", **fp_args)
+    ax2.set_xticks(range(len(labels)))
+    ax2.set_xticklabels(labels, **fp_args)
     ax2.axhline(y=user_monthly, color='#3498db', linestyle='--', alpha=0.5)
 
     plt.tight_layout()
@@ -199,7 +204,6 @@ st.sidebar.markdown("請調整下方參數進行預測")
 input_data = {}
 
 def format_option(option_value):
-    # 將資料值轉換為中英顯示字串，若找不到則回傳原值
     return OPTION_MAP.get(option_value, option_value)
 
 with st.sidebar.form(key='input_form'):
@@ -273,43 +277,37 @@ if submit_button:
 
     col1, col2 = st.columns([1.5, 1])
 
-    # --- 左側：圖表與解讀 ---
     with col1:
         st.subheader("📈 數據比較與解讀")
         st.markdown("**Benchmark Analysis (基準比較)**")
-        fig = plot_comparison(input_data['tenure'], input_data['MonthlyCharges'], stats)
+        # 呼叫繪圖 (傳入 font_prop)
+        fig = plot_comparison(input_data['tenure'], input_data['MonthlyCharges'], stats, font_prop)
         st.pyplot(fig)
         
-        # --- 自動化圖表解讀區塊 (Auto Insights) ---
+        # 自動化圖表解讀區塊
         insight_html = "<div class='explanation-box'><b>📊 圖表解讀助手：</b><br>"
-        
-        # 判斷年資
         if input_data['tenure'] < stats['avg_tenure_churn']:
             insight_html += "- <span style='color:#e74c3c;'>⚠️ <b>年資過短：</b></span> 此客戶年資低於流失者平均，屬於不穩定期。<br>"
         else:
             insight_html += "- <span style='color:#2ecc71;'>✅ <b>年資穩定：</b></span> 此客戶年資已累積一定長度，忠誠度較高。<br>"
             
-        # 判斷月費
         if input_data['MonthlyCharges'] > stats['avg_monthly_churn']:
             insight_html += "- <span style='color:#e74c3c;'>⚠️ <b>資費壓力：</b></span> 月費 <b>高於</b> 流失群體平均，價格可能是流失主因。<br>"
         elif input_data['MonthlyCharges'] < stats['avg_monthly_no_churn']:
             insight_html += "- <span style='color:#2ecc71;'>✅ <b>資費安全：</b></span> 月費低於留存群體平均，價格競爭力強。<br>"
         else:
             insight_html += "- <span style='color:#f39c12;'>ℹ️ <b>資費適中：</b></span> 月費介於平均值之間。<br>"
-            
         insight_html += "<br><i>(藍色=當前客戶, 綠色=留存平均, 紅色=流失平均)</i></div>"
         st.markdown(insight_html, unsafe_allow_html=True)
 
         st.write("")
         st.markdown("**📦 已訂閱加值服務:**")
-        # 只列出有選 Yes 的加值服務
         subscribed_services = [ch_label for eng_col, ch_label in SERVICE_LABELS.items() if input_data.get(eng_col) == 'Yes']
         if subscribed_services:
             st.success("  |  ".join(subscribed_services))
         else:
             st.caption("無訂閱任何加值服務")
 
-    # --- 右側：預測結果 ---
     with col2:
         st.subheader("🎯 預測判讀")
         st.write(f"流失機率: **{prob:.1%}**")
@@ -338,8 +336,15 @@ else:
         wedges, texts, autotexts = ax1.pie(
             sizes, labels=['Churn (流失)', 'Retain (留存)'], 
             autopct='%1.1f%%', colors=['#e74c3c', '#2ecc71'], 
-            startangle=90, textprops=dict(color="black")
+            startangle=90, 
+            textprops=dict(color="black")
         )
+        
+        # --- 關鍵：修正圓餅圖字體 ---
+        for text in texts:
+            text.set_fontproperties(font_prop)
+        # ------------------------
+
         ax1.axis('equal') 
         st.pyplot(fig1)
     
@@ -349,10 +354,10 @@ else:
 
 st.markdown("---")
 st.caption("Designed for Machine Learning Final Project | 2025")
-# --- 加入 QR Code ---
+
+# --- QR Code ---
 st.sidebar.markdown("---")
 st.sidebar.subheader("📱 手機體驗")
-# 請將這裡換成你部署後的真實網址
 share_url = "https://telco-churn-app-njwb97mjvapp5eoawhyqcsd.streamlit.app" 
 st.sidebar.image(
     f"https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={share_url}",
