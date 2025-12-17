@@ -35,13 +35,6 @@ st.markdown("""
         border-left: 5px solid #3498db;
         font-size: 14px;
     }
-
-    .legend-text {
-        text-align: center; 
-        font-size: 14px; 
-        color: #555;
-        margin-bottom: 15px;
-    }
     
     /* --- 新增：隱藏 Streamlit 預設選單與 Github連結 --- */
     .stDeployButton {display:none;}
