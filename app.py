@@ -59,11 +59,15 @@ st.markdown("""
     /* 2. 隱藏下方 Footer */
     footer {
         visibility: hidden;
+        height: 0px !important;
     }
     
     /* 3. 隱藏上方彩色條 */
     [data-testid="stDecoration"] {
-        display: none;
+        background: transparent !important;
+    }
+    [data-testid="stDecoration"] {
+        display: none !important;
     }
     
     /* 4. 關鍵：保留選單按鈕！不要隱藏 header */
