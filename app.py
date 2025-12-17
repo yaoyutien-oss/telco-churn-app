@@ -18,7 +18,10 @@ st.set_page_config(
 # 加入自訂 CSS
 st.markdown("""
     <style>
+    /* 主背景色 */
     .main {background-color: #f8f9fa;}
+    
+    /* 按鈕樣式 */
     .stButton>button {
         width: 100%;
         background-color: #ff4b4b;
@@ -27,6 +30,8 @@ st.markdown("""
         border-radius: 8px;
         padding: 10px;
     }
+    
+    /* 解讀框框樣式 */
     .explanation-box {
         background-color: #e8f4f8;
         padding: 15px;
@@ -35,6 +40,8 @@ st.markdown("""
         border-left: 5px solid #3498db;
         font-size: 14px;
     }
+    
+    /* 圖例文字樣式 */
     .legend-text {
         text-align: center; 
         font-size: 14px; 
@@ -42,25 +49,26 @@ st.markdown("""
         margin-bottom: 15px;
     }
 
-    /* --- 修改後：只隱藏干擾元素，保留選單 --- */
+    /* --- 介面隱藏設定 (保留選單) --- */
     
-    /* 1. 隱藏右上角的 Deploy 按鈕 */
+    /* 1. 隱藏 Deploy 按鈕 (避免誤按) */
     .stDeployButton {
         display: none;
     }
     
-    /* 2. 隱藏下方的 Made with Streamlit */
+    /* 2. 隱藏下方 Footer */
     footer {
         visibility: hidden;
     }
     
-    /* 3. 隱藏最上方的彩色裝飾條 (讓畫面更乾淨) */
+    /* 3. 隱藏上方彩色條 */
     [data-testid="stDecoration"] {
         display: none;
     }
     
-    /* 注意：這裡把 header {visibility: hidden;} 拿掉了！
-       這樣您的「三點選單」就會正常顯示。 */
+    /* 4. 關鍵：保留選單按鈕！不要隱藏 header */
+    /* header {visibility: hidden;}  <-- 這行千萬不要加 */
+    
     </style>
     """, unsafe_allow_html=True)
 
