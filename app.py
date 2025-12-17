@@ -18,10 +18,7 @@ st.set_page_config(
 # 加入自訂 CSS
 st.markdown("""
     <style>
-    /* 主背景色 */
     .main {background-color: #f8f9fa;}
-    
-    /* 按鈕樣式 */
     .stButton>button {
         width: 100%;
         background-color: #ff4b4b;
@@ -30,8 +27,6 @@ st.markdown("""
         border-radius: 8px;
         padding: 10px;
     }
-    
-    /* 解讀框框樣式 */
     .explanation-box {
         background-color: #e8f4f8;
         padding: 15px;
@@ -40,8 +35,6 @@ st.markdown("""
         border-left: 5px solid #3498db;
         font-size: 14px;
     }
-    
-    /* 圖例文字樣式 */
     .legend-text {
         text-align: center; 
         font-size: 14px; 
@@ -49,36 +42,25 @@ st.markdown("""
         margin-bottom: 15px;
     }
 
-    /* --- 介面隱藏設定 (安全修復版) --- */
+    /* --- 修改後：只隱藏干擾元素，保留選單 --- */
     
-    /* 1. 隱藏 Deploy 按鈕 */
+    /* 1. 隱藏右上角的 Deploy 按鈕 */
     .stDeployButton {
-        visibility: hidden;
+        display: none;
     }
     
-    /* 2. 隱藏 Footer */
+    /* 2. 隱藏下方的 Made with Streamlit */
     footer {
         visibility: hidden;
     }
     
-    /* 3. 隱藏上方彩虹裝飾條 */
+    /* 3. 隱藏最上方的彩色裝飾條 (讓畫面更乾淨) */
     [data-testid="stDecoration"] {
-        visibility: hidden;
+        display: none;
     }
     
-    /* 4. 【關鍵修復】強制讓選單按鈕浮在最上層，並給予足夠空間 */
-    header {
-        z-index: 9999 !important; /* 確保在最上層 */
-        background-color: transparent !important; /* 背景透明 */
-    }
-    
-    /* 5. 確保工具列位置正確 (避免跑版) */
-    [data-testid="stToolbar"] {
-        right: 2rem;
-        top: 0rem;
-        visibility: visible !important;
-        display: block !important;
-    }
+    /* 注意：這裡把 header {visibility: hidden;} 拿掉了！
+       這樣您的「三點選單」就會正常顯示。 */
     </style>
     """, unsafe_allow_html=True)
 
