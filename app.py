@@ -35,13 +35,32 @@ st.markdown("""
         border-left: 5px solid #3498db;
         font-size: 14px;
     }
-    
-    /* --- 新增：隱藏 Streamlit 預設選單與 Github連結 --- */
-    .stDeployButton {display:none;}
-    header {visibility: hidden;}
-    footer {visibility: hidden;}
-    /* ------------------------------------------- */
+    .legend-text {
+        text-align: center; 
+        font-size: 14px; 
+        color: #555;
+        margin-bottom: 15px;
+    }
 
+    /* --- 修改後：只隱藏干擾元素，保留選單 --- */
+    
+    /* 1. 隱藏右上角的 Deploy 按鈕 */
+    .stDeployButton {
+        display: none;
+    }
+    
+    /* 2. 隱藏下方的 Made with Streamlit */
+    footer {
+        visibility: hidden;
+    }
+    
+    /* 3. 隱藏最上方的彩色裝飾條 (讓畫面更乾淨) */
+    [data-testid="stDecoration"] {
+        display: none;
+    }
+    
+    /* 注意：這裡把 header {visibility: hidden;} 拿掉了！
+       這樣您的「三點選單」就會正常顯示。 */
     </style>
     """, unsafe_allow_html=True)
 
