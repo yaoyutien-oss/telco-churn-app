@@ -233,7 +233,7 @@ if submit_button:
 
     # --- 結果頁面 ---
     st.subheader("👤 客戶輪廓摘要")
-    m1, m2, m3, m4 = st.columns(4)
+    m1, m2, m3, m4 = st.columns([2, 1, 1, 1])
     with m1:
         st.metric(label="合約類型", value=format_option(input_data['Contract']).split('(')[0])
     with m2:
