@@ -254,6 +254,16 @@ if submit_button:
         # 繪圖 (使用英文，無需字體檔)
         fig = plot_comparison(input_data['tenure'], input_data['MonthlyCharges'], stats)
         st.pyplot(fig)
+
+        # --- 修改點 3：在圖表下方加入中文圖例 (HTML 美化) ---
+        st.markdown("""
+        <div class='legend-text'>
+            <span style='color:#3498db'>■</span> 藍色=當前客戶 (Current) &nbsp;&nbsp;
+            <span style='color:#2ecc71'>■</span> 綠色=留存平均 (Retained) &nbsp;&nbsp;
+            <span style='color:#e74c3c'>■</span> 紅色=流失平均 (Churned)
+        </div>
+        """, unsafe_allow_html=True)
+        # ------------------------------------------------
         
         # 圖表解讀 (中文說明保留)
         insight_html = "<div class='explanation-box'><b>📊 圖表解讀助手：</b><br>"
