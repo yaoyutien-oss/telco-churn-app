@@ -179,7 +179,7 @@ def format_option(option_value):
 with st.sidebar.form(key='input_form'):
     st.subheader("基本數值 (Basic Info)")
     tenure = st.slider(FIELD_LABELS["tenure"], 0, 72, int(stats["tenure_mean"]))
-    monthly = st.number_input(FIELD_LABELS["MonthlyCharges"], 0.0, 200.0, float(stats["monthly_mean"]))
+    monthly = st.number_input(FIELD_LABELS["MonthlyCharges"], 0.0, 120.0, float(stats["monthly_mean"]))
     
     st.write("---")
     use_auto_total = st.checkbox("使用自動計算總費用?", value=True, help="勾選後，將自動使用「月數 x 月費」作為總費用")
