@@ -49,30 +49,29 @@ st.markdown("""
         margin-bottom: 15px;
     }
 
-    /* --- 介面隱藏設定 (保留選單) --- */
+    /* --- 介面隱藏設定 (強力版) --- */
     
-    /* 1. 隱藏 Deploy 按鈕 (避免誤按) */
+    /* 1. 隱藏 Deploy 按鈕 (加上 !important 強制執行) */
     .stDeployButton {
-        display: none;
+        display: none !important;
+        visibility: hidden !important;
     }
     
-    /* 2. 隱藏下方 Footer */
+    /* 2. 隱藏下方 Footer (直接設為 display: none 比較乾淨) */
     footer {
-        visibility: hidden;
-        height: 0px !important;
+        display: none !important;
+        visibility: hidden !important;
     }
     
     /* 3. 隱藏上方彩色條 */
     [data-testid="stDecoration"] {
-        background: transparent !important;
-    }
-    [data-testid="stDecoration"] {
         display: none !important;
     }
     
-    /* 4. 關鍵：保留選單按鈕！不要隱藏 header */
-    /* header {visibility: hidden;}  <-- 這行千萬不要加 */
-    
+    /* 4. 針對手機版選單的微調 (確保選單按鈕還在) */
+    [data-testid="stToolbar"] {
+        right: 2rem;
+    }
     </style>
     """, unsafe_allow_html=True)
 
