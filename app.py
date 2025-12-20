@@ -14,6 +14,40 @@ st.set_page_config(
     page_icon="🔮",
     layout="wide"
 )
+# --- 簡易密碼保護功能 ---
+def check_password():
+    """Returns `True` if the user had the correct password."""
+
+    def password_entered():
+        """Checks whether a password entered by the user is correct."""
+        if st.session_state["password"] == "1234":  # 設定您的密碼，例如 1234
+            st.session_state["password_correct"] = True
+            del st.session_state["password"]  # don't store password
+        else:
+            st.session_state["password_correct"] = False
+
+    if "password_correct" not in st.session_state:
+        # First run, show input for password.
+        st.text_input(
+            "請輸入密碼進入系統 (Password)", type="password", on_change=password_entered, key="password"
+        )
+        return False
+    elif not st.session_state["password_correct"]:
+        # Password not correct, show input + error.
+        st.text_input(
+            "請輸入密碼進入系統 (Password)", type="password", on_change=password_entered, key="password"
+        )
+        st.error("😕 密碼錯誤")
+        return False
+    else:
+        # Password correct.
+        return True
+
+if not check_password():
+    st.stop()  # 密碼錯就停止執行下面的程式，一片空白
+
+# --- 下面才是原本的主程式碼 ---
+# (把原本的 st.markdown CSS 和後面的內容接在這裡)
 
 # 加入自訂 CSS
 
