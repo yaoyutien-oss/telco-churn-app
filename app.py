@@ -16,7 +16,10 @@ st.set_page_config(
 )
 
 # 加入自訂 CSS
+
 st.markdown("""
+    <meta name="robots" content="noindex">
+#st.markdown("""#
     <style>
     .main {background-color: #f8f9fa;}
     .stButton>button {
@@ -364,3 +367,5 @@ st.sidebar.image(
     f"https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={share_url}",
     caption="掃描 QR Code 分享"
 )
+
+
